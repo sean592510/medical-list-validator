@@ -1,1 +1,1 @@
-Hardcoded some info but better to follow it up csv files
+Hardcoded some info but better to follow it up with csv files
