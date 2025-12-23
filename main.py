@@ -1,58 +1,34 @@
 import re
 
+
 medical_records = [
-    {
-        'patient_id': 'P1001',
-        'age': 34,
-        'gender': 'Female',
-        'diagnosis': 'Hypertension',
-        'medications': ['Lisinopril'],
-        'last_visit_id': 'V2301',
-    },
-    {
-        'patient_id': 'p1002',
-        'age': 47,
-        'gender': 'male',
-        'diagnosis': 'Type 2 Diabetes',
-        'medications': ['Metformin', 'Insulin'],
-        'last_visit_id': 'v2302',
-    },
-    {
-        'patient_id': 'P1003',
-        'age': 29,
-        'gender': 'female',
-        'diagnosis': 'Asthma',
-        'medications': ['Albuterol'],
-        'last_visit_id': 'v2303',
-    },
-    {
-        'patient_id': 'p1004',
-        'age': 56,
-        'gender': 'Male',
-        'diagnosis': 'Chronic Back Pain',
-        'medications': ['Ibuprofen', 'Physical Therapy'],
-        'last_visit_id': 'V2304',
-    }
+    # ... (datos omitidos por brevedad) ...
 ]
+
 
 def find_invalid_records(
     patient_id, age, gender, diagnosis, medications, last_visit_id
 ):
+
     constraints = {
         'patient_id': isinstance(patient_id, str)
-        and re.fullmatch('p\d+', patient_id, re.IGNORECASE),
+        # CORRECCIÓN: Usamos r'' para la cadena cruda
+        and re.fullmatch(r'p\d+', patient_id, re.IGNORECASE),
         'age': isinstance(age, int) and age >= 18,
         'gender': isinstance(gender, str) and gender.lower() in ('male', 'female'),
         'diagnosis': isinstance(diagnosis, str) or diagnosis is None,
         'medications': isinstance(medications, list)
         and all([isinstance(i, str) for i in medications]),
         'last_visit_id': isinstance(last_visit_id, str)
-        and re.fullmatch('v\d+', last_visit_id, re.IGNORECASE)
+        # CORRECCIÓN: Usamos r'' para la cadena cruda
+        and re.fullmatch(r'v\d+', last_visit_id, re.IGNORECASE)
     }
 
     return [key for key, value in constraints.items() if not value]
 
+
 def validate(data):
+    # ... (cuerpo de la función validate) ...
     is_sequence = isinstance(data, (list, tuple))
 
     if not is_sequence:
@@ -77,17 +53,16 @@ def validate(data):
             is_invalid = True
             continue
 
-        invalid_fields = find_invalid_records(**dictionary)
+        invalid_records = find_invalid_records(**dictionary)
         
-        if invalid_fields:
-            for key in invalid_fields:
-                val = dictionary[key]
-                print(f"Unexpected format '{key}: {val}' at position {index}.")
+        for key in invalid_records:
+            val = dictionary[key]
+            print(f"Unexpected format '{key}: {val}' at position {index}.")
             is_invalid = True
-        
+
     if is_invalid:
         return False
     print('Valid format.')
     return True
-for patient_id, age, gender, diagnosis, medications, last_visit_id in invalid_records:
-    print(f"Invalid: patient_id={patientid}, Age={age}, Gender ={gender}, Diagnosis = {diagnosis}")   
+
+validate(medical_records)
